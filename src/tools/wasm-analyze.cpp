@@ -379,10 +379,10 @@ public:
 
 // Calculate a hash value based on executing an expression
 struct ExecutionHasher {
-  std::unordered_map<size_t, std::vector<Expression*>> hashClasses; // hash value => list of expressions that have it, so they may be equal
+  std::unordered_map<uint64_t, std::vector<Expression*>> hashClasses; // hash value => list of expressions that have it, so they may be equal
 
   void note(Expression* expr) {
-    size_t hash;
+    uint64_t hash;
     try {
       hash = doHash(expr);
     } catch (TrapException& e) {
@@ -392,9 +392,9 @@ struct ExecutionHasher {
     hashClasses[hash].push_back(expr); // we depend on expr being unique, so the classes are mathematical sets
   }
 
-  size_t doHash(Expression* expr) {
+  uint64_t doHash(Expression* expr) {
     // combine the result of multiple executions into the final hash
-    size_t hash = 0;
+    uint64_t hash = 0;
     for (Index i = 0; i < NUM_EXECUTIONS; i++) {
       LocalGenerator localGenerator(i);
       Flow flow = Runner(localGenerator).visit(expr);
