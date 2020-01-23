@@ -428,11 +428,6 @@ SPEC_TEST_BLACKLIST = [
     'binary-leb128.wast',
     'custom.wast',
 
-    # Empty 'then' or 'else' in 'if'
-    'if.wast',
-    'local_set.wast',
-    'store.wast',
-
     # No module in a file
     'token.wast',
     'utf8-custom-section-id.wast',
