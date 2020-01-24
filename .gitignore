@@ -22,6 +22,8 @@ CMakeFiles
 config.h
 *.o
 *.obj
+compile_commands.json
+.clangd
 
 # files related to bulding in-tree on windows
 /.vs/
