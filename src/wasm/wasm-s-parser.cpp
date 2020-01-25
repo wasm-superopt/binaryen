@@ -74,6 +74,8 @@ Element* Element::operator[](unsigned i) {
     throw ParseException("expected list", line, col);
   }
   if (i >= list().size()) {
+    dump();
+    std::cout<< i << ", " << list().size() << std::endl;
     throw ParseException("expected more elements in list", line, col);
   }
   return list()[i];
@@ -1124,6 +1126,9 @@ Expression* SExpressionWasmBuilder::makeBlock(Element& s) {
 // Similar to block, but the label is handled by the enclosing if (since there
 // might not be a then or else, ick)
 Expression* SExpressionWasmBuilder::makeThenOrElse(Element& s) {
+  if (s.size() == 1) {
+    return makeNop();
+  }
   auto ret = allocator.alloc<Block>();
   size_t i = 1;
   if (s[1]->isStr()) {
@@ -1309,8 +1314,8 @@ SExpressionWasmBuilder::makeStore(Element& s, Type type, bool isAtomic) {
   ret->valueType = type;
   ret->bytes = parseMemBytes(extra, type.getByteSize());
   size_t i = parseMemAttributes(s, ret->offset, ret->align, ret->bytes);
-  ret->ptr = parseExpression(s[i]);
-  ret->value = parseExpression(s[i + 1]);
+    ret->ptr = parseExpression(s[i]);
+    ret->value = parseExpression(s[i + 1]);
   ret->finalize();
   return ret;
 }
@@ -1744,9 +1749,9 @@ Expression* SExpressionWasmBuilder::makeBreakTable(Element& s) {
   if (ret->targets.size() == 0) {
     throw ParseException("switch with no targets", s.line, s.col);
   }
-  ret->default_ = ret->targets.back();
-  ret->targets.pop_back();
-  ret->condition = parseExpression(s[i++]);
+    ret->default_ = ret->targets.back();
+    ret->targets.pop_back();
+    ret->condition = parseExpression(s[i++]);
   if (i < s.size()) {
     ret->value = ret->condition;
     ret->condition = parseExpression(s[i++]);
